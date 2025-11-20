@@ -33,7 +33,8 @@ class LoginNeedsVerification extends Notification
 
     public function toTwilio($notifiable){
         
-        $loginCode = rand(min: 100000, 999999);
+        $loginCode = rand( 100000, 999999);
+        
 
         $notifiable->update([
             'login_code' => $loginCode
