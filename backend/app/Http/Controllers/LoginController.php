@@ -26,4 +26,29 @@ class LoginController extends Controller
         // return response
         return response()->json(['message' => 'Text message notification sent.'], 200);
     }
+
+    public function verify(Request $request){
+
+        // Validate Request
+        $request->validate([
+            'phone' => 'required|numeric|min:10',
+            'login_code'=> 'required|numeric|between:111111,999999'
+        ]);
+
+        // Find the user
+        $user = User::where('phone', $request->phone)
+            ->where('login_code', $request->login_code)->first();
+        
+        // if provided code matches:
+        // set login_code to null in DB
+        // return an auth token
+        if($user){
+            $user->update(['login_code' => null]);
+
+            return $user->createToken($request->login_code)->plainTextToken;
+        }
+
+        // if provided code does not match
+        return response()->json(['message'=> 'Invalid verification code.'], 401);
+    }
 }
