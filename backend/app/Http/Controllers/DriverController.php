@@ -16,6 +16,31 @@ class DriverController extends Controller
     }
 
     public function update(Request $request){
-         return 2;
+        
+        $request->validate([
+            'year' => 'required|numeric|between:2010,2024',
+            'make' => 'required',
+            'model' => 'required',
+            'color'=> 'required',
+            'license_plate' => 'required',
+            'name' => 'required'
+        ]);
+
+        $user = $request->user();
+
+        $user->update($request->only('name'));
+
+        // create or update a driver associated with the user
+        $user->driver()->createOrUpdate($request->only([
+            'year',
+            'make',
+            'model',
+            'color',
+            'license_plate'
+        ]));
+
+        $user->load('driver');
+
+        return $user;
     }
 }
