@@ -21,10 +21,12 @@ class LoginController extends Controller
         }
 
         // send the user a one-time use code
-        $user->notify(new LoginNeedsVerification());
+        // $user->notify(new LoginNeedsVerification());
+        $notification = new LoginNeedsVerification();
+        $notification->send($user);
 
         // return response
-        return response()->json(['message' => 'Text message notification sent.'], 200);
+        return response()->json(['message' => 'WhatsApp message notification sent.'], 200);
     }
 
     public function verify(Request $request){
