@@ -31,7 +31,7 @@ class DriverController extends Controller
         $user->update($request->only('name'));
 
         // create or update a driver associated with the user
-        $user->driver()->createOrUpdate($request->only([
+        $user->driver()->updateOrCreate($request->only([
             'year',
             'make',
             'model',
