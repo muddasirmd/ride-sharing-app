@@ -35,17 +35,6 @@ class User extends Authenticatable
         return $this->phone;
     }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'password' => 'hashed',
-        ];
-    }
 
     public function driver(){
         return $this->hasOne(Driver::class);
