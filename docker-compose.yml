@@ -1,0 +1,56 @@
+
+services:
+  backend:
+    image: php:8.2-apache
+    container_name: ride-sharing-app-backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend/:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - appnet
+      - ai-net
+
+    # Enable PHP extensions
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  frontend:
+    build: ./frontend
+    container_name: ride-sharing-app-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - ai-net
+    volumes:
+    - ./frontend/vue-app:/app
+    - /app/node_modules
+
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    container_name: ride-sharing-app-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ride_sharing_app
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - appnet
+
+volumes:
+  mysql_data:
+
+networks:
+  appnet:
+  ai-net:
+    driver: bridge
