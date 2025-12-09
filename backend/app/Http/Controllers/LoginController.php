@@ -10,8 +10,15 @@ class LoginController extends Controller
 {
     public function submit(Request $request){
 
+        /**
+         * Acceptable phone number formats:
+         * +92 300 1234567
+         * 0300-1234567
+         * (0300) 1234567
+         */
         // Validate the phone number
-        $request->validate(['phone' => 'required|numeric|min:10']);
+        $request->validate(['phone' => 'required|regex:/^[0-9+\-\s()]{10,20}$/']);
+        
 
         // find or create user model
         $user = User::firstOrCreate(['phone' => $request->phone]);
