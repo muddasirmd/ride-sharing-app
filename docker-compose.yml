@@ -2,6 +2,10 @@
 services:
   backend:
     image: php:8.2-apache
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    build: ./backend
     container_name: ride-sharing-app-backend
     ports:
       - "80:80"
@@ -13,10 +17,6 @@ services:
       - appnet
       - ai-net
 
-    # Enable PHP extensions
-    build:
-      context: .
-      dockerfile: Dockerfile
 
   frontend:
     build: ./frontend
