@@ -51,7 +51,7 @@ class LoginNeedsVerification extends Notification
             "whatsapp:+923035015156",  // e.g., "whatsapp:+923035015156"
             [
                 "from" => "whatsapp:" . env('TWILIO_WHATSAPP_FROM_SANDBOX'), // sandbox number
-                "body" => "Your RSA login code is: {$loginCode}. Do not share it with anyone."
+                "body" => "Your login code is: {$loginCode}. Do not share it with anyone."
             ]
         );
     }
