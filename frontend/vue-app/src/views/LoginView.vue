@@ -48,7 +48,7 @@
 
 <script setup>
 import { vMaska } from "maska/vue"
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from "vue-router"
 
@@ -60,6 +60,12 @@ const credentials = reactive({
 })
 
 const waitingOnVerification =ref(false)
+
+onMounted(() => {
+    if(localStorage.getItem('token')){
+        router.push({ name: 'landing' })
+    }
+})
 
 const handleLogin = () => {
     axios.post('http://localhost/api/login', credentials)
@@ -80,7 +86,7 @@ const handleVerification = () => {
             console.log(response.data)
             localStorage.setItem('token', response.data)
             router.push({
-                name: 'index'
+                name: 'landing'
             })
         })
         .catch((error) => {
