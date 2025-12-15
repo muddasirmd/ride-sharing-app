@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/LoginView.vue'
 import LandingView from '@/views/LandingView.vue'
+import axios from 'axios'
+import LocationView from '@/views/LocationView.vue'
 
 const routes = [
   {
@@ -12,6 +14,11 @@ const routes = [
     path: '/landing',
     name: 'landing',
     component: LandingView
+  },
+  {
+    path: '/location',
+    name: 'location',
+    component: LocationView
   }
 ]
 
@@ -22,7 +29,7 @@ const router = createRouter({
 
 
 // Navigation guard | Middleware
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   
   if(to.name === 'login'){
     return true
@@ -30,7 +37,7 @@ router.beforeEach((to, from, next) => {
 
   if(!localStorage.getItem('token')){
     return {
-      name: 'Login'
+      name: 'login'
     }
   }
 
