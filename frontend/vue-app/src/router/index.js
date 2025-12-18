@@ -4,6 +4,9 @@ import LandingView from '@/views/LandingView.vue'
 import axios from 'axios'
 import LocationView from '@/views/LocationView.vue'
 import MapView from '@/views/MapView.vue'
+import TripView from '@/views/TripView.vue'
+import StandByView from '@/views/StandByView.vue'
+import DriverView from '@/views/DriverView.vue'
 
 const routes = [
   {
@@ -25,6 +28,21 @@ const routes = [
     path: '/map',
     name: 'map',
     component: MapView
+  },
+  {
+    path: '/trip',
+    name: 'trip',
+    component: TripView
+  },
+  {
+    path: '/driver',
+    name: 'driver',
+    component: DriverView
+  },
+  {
+    path: '/standby',
+    name: 'standby',
+    component: StandByView
   }
 ]
 
