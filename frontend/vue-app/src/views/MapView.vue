@@ -15,7 +15,9 @@
                     </div>
                 </div>
                 <div class="px-4 py-3 text-right sm:px-6 bg-gray-50">
-                    <button class="inline-flex justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none">
+                    <button 
+                        @click="handleConfirmTrip"
+                        class="inline-flex justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none">
                         Let's Go
                     </button>
                 </div>
@@ -28,11 +30,29 @@
 import { useLocationStore } from '@/stores/location';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import http from '@/helpers/http';
 
 const location = useLocationStore();
 const router = useRoute();
 
 const gMap = ref(null)
+
+const handleConfirmTrip = () => {
+
+    http().post('/api/trip', {
+        origin: location.current.geometry,
+        destination: location.destination.geometry,
+        destination_name: location.destination.name
+    })
+    .then((response) => {
+        console.log(response)
+        router.push({name: 'trip'})
+    })
+    .catch((error) => {
+        console.error(error)
+    })
+}
+
 
 onMounted(async () => {
     // does the user have a destination set?
@@ -40,7 +60,7 @@ onMounted(async () => {
         router.push({name: 'location'})
     }
 
-    // lets get the user current location
+    // lets get the user's current location
     await location.updateCurrentLocation()
 
     // Draw a path on the map
@@ -68,4 +88,5 @@ onMounted(async () => {
             })
     })
 })
+
 </script>
