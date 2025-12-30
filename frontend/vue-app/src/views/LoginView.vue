@@ -51,6 +51,7 @@ import { vMaska } from "maska/vue"
 import { onMounted, reactive, ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from "vue-router"
+import http from "@/helpers/http"
 
 const router = useRouter()
 
@@ -68,7 +69,8 @@ onMounted(() => {
 })
 
 const handleLogin = () => {
-    axios.post('http://localhost/api/login', credentials)
+
+    http().post('api/login', credentials)
         .then((response) => {
             console.log('Login successful:', response.data)
             waitingOnVerification.value = true
@@ -77,11 +79,12 @@ const handleLogin = () => {
             console.error('Login failed:', error)
             alert(error.response.data.message || 'Login failed. Please try again.')
         })
+    
 }
 
 const handleVerification = () => {
 
-    axios.post('http://localhost/api/login/verify', credentials)
+    http().post('api/login/verify', credentials)
         .then((response) => {
             console.log(response.data)
             localStorage.setItem('token', response.data)

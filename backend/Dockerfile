@@ -1,15 +1,32 @@
-FROM php:8.2-apache
+FROM php:8.2-fpm
 
-WORKDIR /var/www/html
-
-COPY . /var/www/html
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    libzip-dev
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql zip
 
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Update Apache configuration to set DocumentRoot to /var/www/html/public
-RUN sed -i 's#/var/www/html#/var/www/html/public#g' /etc/apache2/sites-available/000-default.conf
+WORKDIR /var/www
+
+# Copy project
+COPY . .
+
+# Install Laravel dependencies
+RUN composer install
+
+# Permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+
+EXPOSE 8000

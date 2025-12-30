@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import axios from 'axios'
+import http from '@/helpers/http'
 import Login from '@/views/LoginView.vue'
 import LandingView from '@/views/LandingView.vue'
-import axios from 'axios'
 import LocationView from '@/views/LocationView.vue'
 import MapView from '@/views/MapView.vue'
 import TripView from '@/views/TripView.vue'
@@ -69,7 +70,8 @@ router.beforeEach((to, from) => {
 })
 
 const checkTokenAuthenticity = () => {
-  axios.get('http://localhost/api/user', {
+
+  http().get('api/user', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`
     }
