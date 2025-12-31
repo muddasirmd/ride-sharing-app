@@ -25,6 +25,8 @@ services:
       - ./frontend/vue-app:/app
       - /app/node_modules
     command: npm run dev -- --host
+    environment:
+    - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
 
   mysql:
     image: mysql:8.0
