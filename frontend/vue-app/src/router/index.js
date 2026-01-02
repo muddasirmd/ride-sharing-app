@@ -8,6 +8,7 @@ import MapView from '@/views/MapView.vue'
 import TripView from '@/views/TripView.vue'
 import StandByView from '@/views/StandByView.vue'
 import DriverView from '@/views/DriverView.vue'
+import Driving from '@/views/DrivingView.vue'
 
 const routes = [
   {
@@ -44,6 +45,11 @@ const routes = [
     path: '/standby',
     name: 'standby',
     component: StandByView
+  },
+  {
+    path: '/driving',
+    name: 'driving',
+    component: Driving
   }
 ]
 
