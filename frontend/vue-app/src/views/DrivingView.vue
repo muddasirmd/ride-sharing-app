@@ -17,6 +17,14 @@
                 </div>
                 <div class="px-4 py-3 text-right sm:px-6 bg-gray-50">
 
+                    <button v-if="trip.is_started"
+                     class="inline-flex justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none">
+                        Complete Trip
+                    </button>
+                    <button v-else
+                     class="inline-flex justify-center rounded-md border border-transparent bg-black py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-600 focus:outline-none">
+                        Passenger Picked Up
+                    </button>
                 </div>
             </div>
         </div>
@@ -25,12 +33,17 @@
 
 <script setup>
 
+import http from '@/helpers/http';
 import { useLocationStore } from '@/stores/location';
-import { onMounted, ref } from 'vue';
+import { useTripStore } from '@/stores/trip';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const location = useLocationStore();
+const trip = useTripStore();
 
 const gMap = ref(null)
+
+const intervalRef = ref(null)
 
 const currentIcon = {
     url: 'https://openmoji.org/data/color/svg/1F698.svg',
@@ -60,19 +73,40 @@ const updateMapBounds = (mapObject) => {
     mapObject.fitBounds(latLngBounds)
 }
 
+const broadcastDriverLocation = () => {
+    http().post(`/api/trip/${trip.id}/location`, {
+        driver_location: location.current.geometery
+    })
+    .then((response) => {
+
+    })
+    .catch((error) => {
+        console.error(error)
+    })
+}
+
 onMounted(() => {
 
     gMap.value.$mapPromise.then((mapObject) => {
         updateMapBounds(mapObject)
     })
 
-    setInterval(async () => {
+    intervalRef.value = setInterval(async () => {
         // Update the driver's current position and update map bounds
         await location.updateCurrentLocation()
         
+        // Update the driver's position in the database
+        broadcastDriverLocation()
+
         updateMapBounds(mapObject)
     }, 5000)
 
+})
+
+onUnmounted(() => {
+    clearInterval(intervalRef.value)
+
+    intervalRef.value = null
 })
 
 </script>

@@ -66,26 +66,24 @@ onMounted(async () => {
     // Draw a path on the map
     gMap.value.$mapPromise.then((mapObject) => {
 
-        let currentPoint = new google.maps.LatLng(location.current.geometry),
-            destinationPoint = new google.maps.LatLng(location.destination.geometry),
-            directionService = new google.maps.DirectionsService,
-            directionsDisplay = new google.maps.DirectionsRenderer({
-                map: mapObject
-            })
+        let currentPoint = new google.maps.LatLng(location.current.geometry)
+        let destinationPoint = new google.maps.LatLng(location.destination.geometry)
+        let directionService = new google.maps.DirectionsService
+        let directionsDisplay = new google.maps.DirectionsRenderer({map: mapObject})
 
-            directionService.route({
-                origin: currentPoint,
-                destination: destinationPoint,
-                avoidTolls: false,
-                avoidHighways: false,
-                travelMode: google.maps.TravelMode.DRIVING
-            }, (res, status) => {
-                if(status == google.maps.DirectionsStatus.OK){
-                    directionsDisplay.setDirections(res)
-                }else{
-                    console.error(status)
-                }
-            })
+        directionService.route({
+            origin: currentPoint,
+            destination: destinationPoint,
+            avoidTolls: false,
+            avoidHighways: false,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, (res, status) => {
+            if(status == google.maps.DirectionsStatus.OK){
+                directionsDisplay.setDirections(res)
+            }else{
+                console.error(status)
+            }
+        })
     })
 })
 
