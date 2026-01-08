@@ -31,8 +31,11 @@ import { useLocationStore } from '@/stores/location';
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import http from '@/helpers/http';
+import { useTripStore } from '@/stores/trip';
 
 const location = useLocationStore();
+const trip = useTripStore();
+
 const router = useRoute();
 
 const gMap = ref(null)
@@ -45,7 +48,7 @@ const handleConfirmTrip = () => {
         destination_name: location.destination.name
     })
     .then((response) => {
-        console.log(response)
+        trip.$patch(response.data)
         router.push({name: 'trip'})
     })
     .catch((error) => {
