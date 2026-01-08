@@ -1,3 +1,4 @@
+<!-- Passenger View -->
 <template>
     <div class="pt-16">
         <h1 class="text-3xl font-semibold mb-4">{{ title }}</h1>
@@ -8,6 +9,7 @@
                         <GMapMap :zoom="14" :center="location.current.geometry"
                             ref="gMap" style="width:100%; height: 256px;">
                             <GMapMarker :position="location.current.geometry" :icon="currentIcon" />
+                            <GMapMarker :position="trip.driver_location" :icon="driverIcon" />
                         </GMapMap>
                     </div>
                 </div>
@@ -28,6 +30,9 @@ import Pusher from 'pusher-js';
 const location = useLocationStore()
 const trip = useTripStore()
 
+const gMap = ref(null)
+const gMapObject = ref(null)
+
 const currentIcon = {
     url: 'https://openmoji.org/data/color/svg/1F698.svg',
     scaledSize: {
@@ -36,11 +41,34 @@ const currentIcon = {
     }
 }
 
+const driverIcon = {
+    url: 'https://openmoji.org/data/color/svg/1F920.svg',
+    scaledSize: {
+        width: 24,
+        height: 24
+    }
+}
+
 const title = ref('Waiting on a driver...')
 const message = ref('When a driver accepts the trip, their info will appear here.')
 
+const updateMapBounds = () => {
+
+    let originPoint = new google.maps.LatLng(location.current.geometry)
+    let driverPoint = new google.maps.LatLng(trip.driver_location)
+    let latLngBounds = new google.maps.LatLngBounds()
+
+    latLngBounds.extend(originPoint)
+    latLngBounds.extend(driverPoint)
+
+    gMapObject.value.fitBounds(latLngBounds)
+}
+
 onMounted(() => {
     
+    gMap.value.$mapPromise.then((mapObject) => {
+        gMapObject.value = mapObject
+    })
 
     let echo = new Echo({
         broadcaster: 'pusher',
@@ -58,7 +86,12 @@ onMounted(() => {
             trip.$patch(e.trip)
 
             title.value = 'Driver is on the way!'
-            message.value = `${trip.driver.user.name} is coming in a ${trip.driver.year} ${trip.driver.color} ${trip.driver.make} ${trip.driver.model} with a license plate #${trip.driver.license_plate}`
+            message.value = `${e.trip.driver.user.name} is coming in a ${e.trip.driver.year} ${e.trip.driver.color} ${e.trip.driver.make} ${e.trip.driver.model} with a license plate #${e.trip.driver.license_plate}`
+        })
+        .listen('TripLocationUpdated', (e) => {
+            trip.$patch(e.trip)
+
+            setTimeout(updateMapBounds, 1000)
         })
 })
 

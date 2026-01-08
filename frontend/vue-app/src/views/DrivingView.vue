@@ -63,7 +63,7 @@ const destinationIcon = {
 
 const updateMapBounds = (mapObject) => {
 
-    let originPoint = new google.maps.LatLng(location.current.geometery)
+    let originPoint = new google.maps.LatLng(location.current.geometry)
     let destinationPoint = new google.maps.LatLng(location.destination.geometery)
     let latLngBounds = new google.maps.LatLngBounds()
 
