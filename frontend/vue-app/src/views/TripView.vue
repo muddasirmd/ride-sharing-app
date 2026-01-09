@@ -26,6 +26,7 @@ import { useTripStore } from '@/stores/trip';
 import { onMounted, ref } from 'vue';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import { name } from '@vue/eslint-config-prettier/skip-formatting';
 
 const location = useLocationStore()
 const trip = useTripStore()
@@ -83,15 +84,49 @@ onMounted(() => {
 
     echo.channel(`passenger.${trip.user_id}`)
         .listen('TripAccepted', (e) => {
+            
             trip.$patch(e.trip)
 
             title.value = 'Driver is on the way!'
             message.value = `${e.trip.driver.user.name} is coming in a ${e.trip.driver.year} ${e.trip.driver.color} ${e.trip.driver.make} ${e.trip.driver.model} with a license plate #${e.trip.driver.license_plate}`
         })
         .listen('TripLocationUpdated', (e) => {
+            
             trip.$patch(e.trip)
 
             setTimeout(updateMapBounds, 1000)
+        })
+        .listen('TripStarted', (e) => {
+            
+            trip.$patch(e.trip)
+
+            // Change location obj from passenger's current location to passenger's destination location
+            location.$patch({
+                current: {
+                    geometry: e.trip.destination
+                }
+            })
+
+            title.value = "You're on your way!"
+            message.value = `You are headed to ${e.trip.destination_name}`
+        })
+        .listen('TripEnded', (e) => {
+            
+            trip.$patch(e.trip)
+
+            title.value = "You've arrived at your destination!";
+            message.value = `Hope you enjoyed your ride with ${e.trip.driver.user.name}. Thank you for riding with us!`;
+
+            setTimeout(() => {
+
+                trip.reset()
+                location.reset()
+
+                router.push({
+                    name: 'landing'
+                })
+
+            }, 10000)
         })
 })
 
