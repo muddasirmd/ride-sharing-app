@@ -26,7 +26,6 @@ import { useTripStore } from '@/stores/trip';
 import { onMounted, ref } from 'vue';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
-import { name } from '@vue/eslint-config-prettier/skip-formatting';
 
 const location = useLocationStore()
 const trip = useTripStore()
